@@ -9,12 +9,12 @@ Params:
 `write(data)`
 
 Params:
-- data - list of bytes (?)
+- data - type: bytes
 
 `read()`
 
 Returns:
-- list of bytes (?), length zero if no data available
+- bytes, length zero if no data available
 
 `connected()`
 
