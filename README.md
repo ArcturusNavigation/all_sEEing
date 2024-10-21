@@ -1,10 +1,11 @@
 # LoRa
-`begin(spreading_factor, channel, power)`
+`begin(spreading_factor, channel, power, bandwidth)`
 
 Params:
 - spreading_factor - int between 1 and 12
 - channel - int tbd
-- power - int tbd 
+- power - int tbd
+- bandwidth - int tbd
 
 `write(data)`
 
