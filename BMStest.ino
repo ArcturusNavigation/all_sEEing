@@ -4,8 +4,8 @@
 
 typedef union i2cfloat{
     float f;
-    byte[4] b;
-}
+    byte b[4];
+};
 
 i2cfloat data;
 
