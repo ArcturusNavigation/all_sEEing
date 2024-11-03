@@ -13,6 +13,7 @@ void setup() {
     Serial.begin(9600);
     Wire.begin();
 }
+
 void loop() {
     Serial.println("Turning output on");
     output(0xff);
