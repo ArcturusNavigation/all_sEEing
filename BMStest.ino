@@ -15,12 +15,12 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("Turning output off");
+    output(0x00);
+    delay(5000);
     Serial.println("Turning output on");
     output(0xff);
-    delay(5000);
-    Serial.println("Turning output off");
-    Wire.write(0x01);
-    Wire.write(0x00);
+    delay(1000);
     Serial.println("Reading values");
     readFloat(0x02);
     Serial.print("Battery Voltage: ");
@@ -49,7 +49,7 @@ void loop() {
     readFloat(0x0a);
     Serial.print("Temperature: ");
     Serial.println(data.f);
-    delay(5000);
+    delay(2000);
 
 }
 
