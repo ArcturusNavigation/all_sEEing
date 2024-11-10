@@ -15,10 +15,11 @@ int y0;
 unsigned long prev = millis();
 
 void setup() {
-  
-  
   pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+
   digitalWrite(4, 0);
+  digitalWrite(5, 1);
 
   loraSer.begin(9600);
   delay(100);
@@ -33,14 +34,14 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if(millis() - prev < 1000 && !digitalRead(ESTOP) && !digitalRead(DRIVE)) { //Heartbeat
-    loraSer.write("AT+TEST=TXLRPKT, \"A\"\n");
+    loraSer.write("AT+TEST=TXLRPKT, \"AA\"\n");
     prev = millis();
   }
 
   while(digitalRead(ESTOP)) { //ESTOP
-    loraSer.write("AT+TEST=TXLRPT, \"F\"\n");
+    loraSer.write("AT+TEST=TXLRPT, \"FF\"\n");
     if(millis() - prev < 100){
-      loraSer.write("AT+TEST=TXLRPT, \"F\"\n");
+      loraSer.write("AT+TEST=TXLRPT, \"FF\"\n");
       prev = millis();
     }
   }
@@ -61,14 +62,14 @@ void loop() {
         loraSer.write("\"\n");
       }
       else {
-        loraSer.write("AT+TEST=TXLRPKT, \"C\"\n");
+        loraSer.write("AT+TEST=TXLRPKT, \"CC\"\n");
       }
       prev = millis();
     }
   }
 
   if(analogRead(BATT) < 675) {
-    digitalWrite(5, 1);
+    digitalWrite(5, 0);
   }
 
 }
