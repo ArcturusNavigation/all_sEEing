@@ -17,7 +17,7 @@ class LED:
         self.wait()
     
     def idvClr(self, px, r, g, b):
-        self.ser.write(bytes([self.adr << 1 + 1, 0x05, px, r, g, b]))
+        self.ser.write(bytes([self.adr << 1 + 1, 0x05, px - 1, r, g, b]))
         self.wait()
     
     def clrStrip(self):
