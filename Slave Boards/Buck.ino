@@ -38,6 +38,11 @@ void setup() {
   digitalWrite(3,0);
   digitalWrite(3,1);
   Serial.begin(9600);
+  delay(100);
+  regWrite(ADJ1, 0x02, 0x00); //Disable current limits
+  regWrite(ADJ2, 0x02, 0x00);
+  writeFB(ADJ1, 0x0230); //Set ADJ1 = 12V
+  writeFB(ADJ2, 0x03C0); //Set ADJ2 = 20V
 }
 
 void loop() {
