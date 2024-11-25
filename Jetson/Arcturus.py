@@ -32,7 +32,7 @@ class BMS:
     def wait(self):
         self.ser.read()
     
-    def ouptut(self, value):
+    def output(self, value):
         self.ser.write(bytes([self.adr << 1 + 1, 0x01, value]))
         self.wait()
     
@@ -173,7 +173,7 @@ class Mechanisms:
     def wait(self):
         self.ser.read()
 
-    def ouptut(self, pin, value):
+    def output(self, pin, value):
         self.ser.write(bytes([0x00, 0x01, pin - 1, value]))
         self.wait()
 
