@@ -4,6 +4,13 @@
 #define ADJ1 0x74
 #define ADJ2 0x75
 
+int adj1_fb = 0xffff;
+byte adj1_en = 0;
+
+int adj2_fb = 0xffff;
+byte adj2_en = 0;
+
+
 typedef union i2cfloat{
   float f;
   byte b[4];
@@ -21,6 +28,7 @@ i2cfloat data;
 i2cint fb;
 
 void setup() {
+  Wire1.begin();
   Wire.begin(0x13);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
@@ -29,10 +37,26 @@ void setup() {
   pinMode(4,OUTPUT);
   digitalWrite(3,0);
   digitalWrite(3,1);
+  Serial.begin(9600);
 }
 
 void loop() {
-
+  if(adj1_fb != 0xffff){
+    writeFB(ADJ1, adj1_fb);
+    adj1_fb = 0xffff;
+  }
+  if(adj2_fb != 0xffff){
+    writeFB(ADJ2, adj2_fb);
+    adj2_fb = 0xffff;
+  }
+  if(adj1_en != 0x00){
+    regWrite(ADJ1, 0x06, adj1_en);
+    adj1_en = 0x00;
+  }
+  if(adj2_en != 0x00){
+    regWrite(ADJ2, 0x06, adj2_en);
+    adj2_en = 0x00;
+  }
 }
 
 void receiveEvent() {
@@ -41,30 +65,33 @@ void receiveEvent() {
     case 0x06:
       en = Wire.read();
       if(en != 0x00) {
-        regWrite(ADJ1, 0x06, 0xA0);
+        adj1_en = 0xA0;
+        //regWrite(ADJ1, 0x06, 0xA0);
       }
       else {
-        regWrite(ADJ1, 0x06, 0x20);
+        adj1_en = 0x20;
+        //regWrite(ADJ1, 0x06, 0x20);
       }
       break;
     case 0x07:
       en = Wire.read();
       if(en != 0x00) {
-        regWrite(ADJ2, 0x06, 0xA0);
+        adj2_en = 0xA0;//regWrite(ADJ2, 0x06, 0xA0);
       }
       else {
-        regWrite(ADJ2, 0x06, 0x20);
+        adj2_en = 0x20;//regWrite(ADJ2, 0x06, 0x20);
       }
       break;
     case 0x08:
       readFloat();
-      fb.i = map(data.f * 1000.0,800,200000,0,960);
-      writeFB(ADJ1);
+      fb.i = map(data.f * 1000.0,800,20000,0,960);
+      adj1_fb = fb.i;//writeFB(ADJ1);
       break;
     case 0x09:
       readFloat();
-      fb.i = map(data.f * 1000.0,800,200000,0,960);
-      writeFB(ADJ2);
+      fb.i = map(data.f * 1000.0,800,20000,0,960);
+      adj2_fb = fb.i;
+      //writeFB(ADJ2);
       break;
     case 0x0A:
       en = Wire.read();
@@ -127,11 +154,13 @@ void readFloat() {
   }
 }
 
-void writeFB(byte adr) {
+void writeFB(byte adr, int toSend) {
+  i2cint ts;
+  ts.i = toSend;
   Wire1.beginTransmission(adr);
   Wire1.write(0x00);
   for(byte i = 0; i < 2; i++){
-    Wire1.write(fb.b[i]);
+    Wire1.write(ts.b[i]);
   }
   Wire1.endTransmission();
 }
