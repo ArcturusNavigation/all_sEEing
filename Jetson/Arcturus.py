@@ -173,18 +173,20 @@ class Mechanisms:
     def wait(self):
         self.ser.read()
 
-    def output(self, pin, value):
-        self.ser.write(bytes([0x00, 0x01, pin - 1, value]))
+    def output(self, header, gpio, value):
+        pin = (header - 1) * 2 + (gpio - 1)
+        self.ser.write(bytes([0x00, 0x01, pin, value]))
         self.wait()
 
-    def angle(self, pin, value):
-        self.ser.write(bytes([0x00, 0x02, pin - 1, value]))
+    def angle(self, header, gpio, value):
+        pin = (header - 1) * 2 + (gpio - 1)
+        self.ser.write(bytes([0x00, 0x02, pin, value]))
         self.wait()
 
-    def direction(self, pin, value):
-        self.ser.write(bytes([0x00, 0x03, pin - 1, value]))
+    def direction(self, header, value):
+        self.ser.write(bytes([0x00, 0x03, header - 1, value]))
         self.wait()       
 
-    def output_h(self, pin, value):
-        self.ser.write(bytes([0x00, 0x04, pin - 1, value]))
+    def output_h(self, header, value):
+        self.ser.write(bytes([0x00, 0x04, header - 1, value]))
         self.wait()
