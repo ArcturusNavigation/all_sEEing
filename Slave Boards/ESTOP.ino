@@ -46,6 +46,7 @@ void setup() {
   loraSer.write("AT+TEST=RXLRPKT\n");
   delay(200);
   while(loraSer.available()){Serial.write(loraSer.read());}
+  last = millis();
 }
 
 void loop() {
@@ -63,6 +64,7 @@ void loop() {
   if(millis() - last > 1000) {
     estop = true;
     connected = false;
+    digitalWrite(5, 0);
   }
 }
 
@@ -104,13 +106,20 @@ void parseRx() {
     char xarr[2] = {dtaStr.charAt(0),dtaStr.charAt(1)};
     byte x = strtol(xarr,NULL,16);
     float x_f = (float) x;
-    x_pos.f = -1.0 * x_f / 254.0;
+    Serial.print("X: ");
     
+    x_pos.f = -1.0 * (x_f-127.0) / 127.0;
     char yarr[2] = {dtaStr.charAt(2),dtaStr.charAt(3)};
     int y0 = strtol(yarr,NULL,16);
     byte y = y0 >> 8;
     float y_f = (float) y;
-    y_pos.f = y_f / 254.0;
+    y_pos.f = (y_f - 127.0) / 127.0;
+  }
+  if(estop) {
+    digitalWrite(5, 0);
+  }
+  else {
+    digitalWrite(5, 1);
   }
   while(loraSer.available()){loraSer.read();}
 }
