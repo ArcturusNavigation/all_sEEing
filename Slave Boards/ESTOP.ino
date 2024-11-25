@@ -65,6 +65,7 @@ void loop() {
     estop = true;
     connected = false;
     digitalWrite(5, 0);
+    drive = false;
   }
 }
 
@@ -89,6 +90,7 @@ void parseRx() {
     byte status = dtaStr.charAt(0);
     if(status == 'F'){
       estop = true;
+      drive = false;
     }
     else if(status == 'C'){
       estop = false;
