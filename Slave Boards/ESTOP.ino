@@ -10,25 +10,31 @@ bool drive = false;
 bool connected = true;
 
 int pktLen = 0;
-int rssi = 0;
-int snr = 0;
 
 unsigned long last;
+
+bool rst = false;
 
 typedef union i2cfloat{
   float f;
   byte b[4];
 };
 
+typedef union i2cint{
+  int i;
+  byte b[2];
+};
 
 i2cfloat x_pos;
 i2cfloat y_pos;
+
+i2cint rssi;
+i2cint snr;
 
 void setup() {
   Wire.begin(0x12);
   Wire.onReceive(receiveEvent);
   Wire.onRequest(requestEvent);
-
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
 
@@ -50,6 +56,22 @@ void setup() {
 }
 
 void loop() {
+  if(rst) {
+      digitalWrite(4,1);
+      delay(500);
+      digitalWrite(4,0);
+      delay(500);
+      loraSer.write("AT\n");
+      delay(200);
+      loraSer.write("AT+MODE=TEST\n");
+      delay(200);
+      loraSer.write("AT+TEST=RFCFG,920,SF10,125,8,8,22,ON,OFF,OFF\n");
+      delay(200);
+      loraSer.write("AT+TEST=RXLRPKT\n");
+      delay(200);
+      while(loraSer.available()){Serial.write(loraSer.read());}
+      rst = false;
+  }
   byte avail = loraSer.available();
   if(avail) {
     delay(10);
@@ -79,10 +101,10 @@ void parseRx() {
   pktLen = lenStr.toInt();
   loraSer.readStringUntil(':'); //, RSSI:
   String rssiStr = loraSer.readStringUntil(',');
-  rssi = rssiStr.toInt();
+  rssi.i = rssiStr.toInt();
   loraSer.readStringUntil(':');
   String snrStr = loraSer.readStringUntil('\n');
-  snr = snrStr.toInt();
+  snr.i = snrStr.toInt();
   loraSer.readStringUntil('"'); // +TEST: RX
   String dtaStr = loraSer.readStringUntil('"');
   
@@ -100,9 +122,6 @@ void parseRx() {
       estop = false;
       drive = false;
     }
-    Serial.print("STATUS: ");
-    Serial.write(status);
-    Serial.println();
   }
   else{
     char xarr[2] = {dtaStr.charAt(0),dtaStr.charAt(1)};
@@ -131,19 +150,7 @@ void receiveEvent() {
 
   switch (code) {
     case 0x08:
-      digitalWrite(4,1);
-      delay(500);
-      digitalWrite(4,0);
-      delay(500);
-      loraSer.write("AT\n");
-      delay(200);
-      loraSer.write("AT+MODE=TEST\n");
-      delay(200);
-      loraSer.write("AT+TEST=RFCFG,920,SF10,125,8,8,22,ON,OFF,OFF\n");
-      delay(200);
-      loraSer.write("AT+TEST=RXLRPKT\n");
-      delay(200);
-      while(loraSer.available()){Serial.write(loraSer.read());}
+      rst = true;
       break;
   }
 }
@@ -172,12 +179,12 @@ void requestEvent() {
       Wire.write(connected);
       break;
     case 0x06:
-      Wire.write((byte) rssi >> 8);
-      Wire.write((byte) rssi);
+      Wire.write(rssi.b[0]);
+      Wire.write(rssi.b[1]);
       break;
     case 0x07:
-      Wire.write((byte) snr >> 8);
-      Wire.write((byte) snr);
+      Wire.write(snr.b[0]);
+      Wire.write(snr.b[1]);
       break;
   }
 }
