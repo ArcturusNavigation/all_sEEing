@@ -395,12 +395,24 @@ class Mechanisms:
         Turn load on/off
 
         Args:
-            header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            gpio: #1 for ouptut A, #2 for output B
+            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
+            gpio: 1 for ouptut A, 2 for output B
             value: 1 for on, 0 for off
         """
         pin = (header - 1) * 2 + (gpio - 1)
         self.ser.write(bytes([0x00, 0x01, pin, value]))
+        self.wait()
+
+    def setServo(self, header, gpio):
+        """
+        Set a pin as Servo
+        
+        Args:
+            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
+            gpio: 1 for ouptut A, 2 for output B
+        """
+        pin = (header - 1) * 2 + (gpio - 1)
+        self.ser.write(bytes([0x00, 0x05, pin]))
         self.wait()
 
     def angle(self, header, gpio, value):
@@ -408,8 +420,8 @@ class Mechanisms:
         Set angle of servo
 
         Args:
-            header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            gpio: #1 for ouptut A, #2 for output B
+            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
+            gpio: 1 for ouptut A, 2 for output B
             value: angle (degrees)
         """
         pin = (header - 1) * 2 + (gpio - 1)
@@ -421,10 +433,10 @@ class Mechanisms:
         Set direction of H-Bridge
 
         Args:
-            header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
+            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
             value: 1 for forward, 0 for reverse
         """
-        self.ser.write(bytes([0x00, 0x03, header, value]))
+        self.ser.write(bytes([0x00, 0x03, header - 1, value]))
         self.wait()       
 
     def output_h(self, header, value):
@@ -432,8 +444,8 @@ class Mechanisms:
         Turn H-Bridge on/off
 
         Args:
-            header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
+            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
             value: 1 for on, 0 for off
         """
-        self.ser.write(bytes([0x00, 0x04, header, value]))
+        self.ser.write(bytes([0x00, 0x04, header - 1, value]))
         self.wait()
