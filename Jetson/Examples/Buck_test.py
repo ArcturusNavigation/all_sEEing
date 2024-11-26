@@ -5,7 +5,7 @@ import time
 v1 = 13.0
 v2 = 20.0
 
-ser = serial.Serial("COM1", 115200, timeout = 1)
+ser = serial.Serial("COM16", 115200, timeout = 1)
 
 buck = Arcturus.Buck(ser)
 
