@@ -19,7 +19,7 @@ class LED:
             led (int): led number, 1/2/3
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, led, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, led, value]))
         self.wait()
     
     def fillStrip(self, r, g, b):
@@ -31,7 +31,7 @@ class LED:
             g (int): Green (0-255)
             b (int): Blue (0-255)
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x04, r, g, b]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x04, r, g, b]))
         self.wait()
     
     def idvClr(self, px, r, g, b):
@@ -44,14 +44,14 @@ class LED:
             g (int): Green (0-255)
             b (int): Blue (0-255)
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x05, px - 1, r, g, b]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x05, px - 1, r, g, b]))
         self.wait()
     
     def clrStrip(self):
         """
         Clears strip
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x06]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x06]))
         self.wait()
 
 class BMS:
@@ -76,7 +76,7 @@ class BMS:
         Args:
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x01, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x01, value]))
         self.wait()
     
     def voltage(self):
@@ -184,7 +184,7 @@ class ESTOP:
         """
         Resets LoRa module
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x08]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x08]))
         self.wait()
 
     def estop(self):
@@ -227,7 +227,7 @@ class ESTOP:
         self.ser.write((bytes([self.adr << 1, 4, 0x04])))
         return struct.unpack("<f", self.ser.read(4))
 
-    def conencted(self):
+    def connected(self):
         """
         Is controller connected?
 
@@ -244,8 +244,8 @@ class ESTOP:
         Returns:
             int: RSSI
         """
-        self.ser.write((bytes([self.adr << 1, 2, 0x04])))
-        return struct.unpack("<i", self.ser.read(2))
+        self.ser.write((bytes([self.adr << 1, 2, 0x06])))
+        return struct.unpack("<h", self.ser.read(2))
     
     def snr(self):
         """
@@ -254,8 +254,8 @@ class ESTOP:
         Returns:
             int: snr
         """
-        self.ser.write((bytes([self.adr << 1, 2, 0x04])))
-        return struct.unpack("<i", self.ser.read(2))
+        self.ser.write((bytes([self.adr << 1, 2, 0x07])))
+        return struct.unpack("<h", self.ser.read(2))
 
 class Buck:
     def __init__(self, ser):
@@ -275,7 +275,7 @@ class Buck:
         Args:
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x06, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x06, value]))
         self.wait()
         
     def adj2_en(self, value):
@@ -285,7 +285,7 @@ class Buck:
         Args:
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x07, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x07, value]))
         self.wait()
 
     def fan1(self, value):
@@ -295,7 +295,7 @@ class Buck:
         Args:
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x0A, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x0A, value]))
         self.wait()
     
     def fan2(self, value):
@@ -305,7 +305,7 @@ class Buck:
         Args:
             value (int): 0 for off, 1 for on
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x0B, value]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x0B, value]))
         self.wait()
 
     def adj1_voltage(self, value):
@@ -315,7 +315,7 @@ class Buck:
         Args:
             value (float): voltage between .8 and 20
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x08]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x08]))
         self.ser.write(struct.pack("<f", value))
         self.wait()
 
@@ -326,7 +326,7 @@ class Buck:
         Args:
             value (float): voltage between .8 and 20
         """
-        self.ser.write(bytes([self.adr << 1 + 1, 0x09]))
+        self.ser.write(bytes([(self.adr << 1) + 1, 0x09]))
         self.ser.write(struct.pack("<f", value))
         self.wait()
 
@@ -424,7 +424,7 @@ class Mechanisms:
             header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
             value: 1 for forward, 0 for reverse
         """
-        self.ser.write(bytes([0x00, 0x03, header - 1, value]))
+        self.ser.write(bytes([0x00, 0x03, header, value]))
         self.wait()       
 
     def output_h(self, header, value):
@@ -435,5 +435,5 @@ class Mechanisms:
             header: #1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
             value: 1 for on, 0 for off
         """
-        self.ser.write(bytes([0x00, 0x04, header - 1, value]))
+        self.ser.write(bytes([0x00, 0x04, header, value]))
         self.wait()
