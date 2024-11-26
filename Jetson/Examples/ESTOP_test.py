@@ -2,11 +2,11 @@ import Arcturus
 import serial
 import time
 
-ser = serial.Serial("COM1", 115200, timeout = 1)
+ser = serial.Serial("COM16", 115200, timeout = 1)
 
 estop = Arcturus.ESTOP(ser)
 
-print("Resetting ESTOP board")
+print("Resetting ESTOP LoRa Module")
 print("Warning: May trigger ESTOP/UNESTOP")
 estop.reset()
 time.sleep(5)
