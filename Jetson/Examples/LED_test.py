@@ -2,7 +2,7 @@ import Arcturus
 import serial
 import time
 
-ser = serial.Serial("COM1", 115200, timeout = 1)
+ser = serial.Serial("COM16", 115200, timeout = 1)
 
 led_board = Arcturus.LED(ser)
 
