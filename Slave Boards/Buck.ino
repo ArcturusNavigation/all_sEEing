@@ -43,6 +43,8 @@ void setup() {
   regWrite(ADJ2, 0x02, 0x00);
   writeFB(ADJ1, 0x0230); //Set ADJ1 = 12V
   writeFB(ADJ2, 0x03C0); //Set ADJ2 = 20V
+  regWrite(ADJ1, 0x06, 0xA0); //Enable Outputs
+  regWrite(ADJ2, 0x06, 0xA0);
 }
 
 void loop() {
@@ -71,32 +73,29 @@ void receiveEvent() {
       en = Wire.read();
       if(en != 0x00) {
         adj1_en = 0xA0;
-        //regWrite(ADJ1, 0x06, 0xA0);
       }
       else {
         adj1_en = 0x20;
-        //regWrite(ADJ1, 0x06, 0x20);
       }
       break;
     case 0x07:
       en = Wire.read();
       if(en != 0x00) {
-        adj2_en = 0xA0;//regWrite(ADJ2, 0x06, 0xA0);
+        adj2_en = 0xA0;
       }
       else {
-        adj2_en = 0x20;//regWrite(ADJ2, 0x06, 0x20);
+        adj2_en = 0x20;
       }
       break;
     case 0x08:
       readFloat();
       fb.i = map(data.f * 1000.0,800,20000,0,960);
-      adj1_fb = fb.i;//writeFB(ADJ1);
+      adj1_fb = fb.i;
       break;
     case 0x09:
       readFloat();
       fb.i = map(data.f * 1000.0,800,20000,0,960);
       adj2_fb = fb.i;
-      //writeFB(ADJ2);
       break;
     case 0x0A:
       en = Wire.read();
