@@ -33,9 +33,14 @@ void setup() {
   for(byte i = 0; i < 10; i++) {
     pinMode(pins[i], OUTPUT);
   }
+  pinMode(18,OUTPUT);
+  pinMode(19,OUTPUT);
+  digitalWrite(18,1);
+  digitalWrite(19,1);
+
 
   attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
-
+  delay(100);
   output(T1, 0x01, 0xff);
   output(T2, 0x01, 0xff);
 }
@@ -133,15 +138,21 @@ void isr() {
 }
 
 void estop() {
+  digitalWrite(18,0);
+  digitalWrite(19,0);
   sei();
   output(0x08, 0x01, 0x00);
   output(0x09, 0x01, 0x00);
 }
 
 void unestop() {
+  digitalWrite(18,1);
+  digitalWrite(19,1);
   sei();
+  delay(100);
   output(0x08, 0x01, 0xff);
   output(0x09, 0x01, 0xff);
+
 }
 
 void output(byte adr, byte reg, byte val) {
