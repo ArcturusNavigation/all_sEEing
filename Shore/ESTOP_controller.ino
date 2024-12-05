@@ -29,17 +29,17 @@ void setup() {
   delay(200);
 }
 void loop() {
-  if(millis() - prev > 250 && !digitalRead(ESTOP) && !digitalRead(DRIVE)) { //Heartbeat
+  if(millis() - prev > 250 && digitalRead(ESTOP) && !digitalRead(DRIVE)) { //Heartbeat
     loraSer.write("AT+TEST=TXLRPKT, \"AA\"\n");
     prev = millis();
   }
-  if(digitalRead(ESTOP)) { //ESTOP
+  if(!digitalRead(ESTOP)) { //ESTOP
     if(millis() - prev > 250){
       loraSer.write("AT+TEST=TXLRPKT, \"FF\"\n");
       prev = millis();
     }
   }
-  if(digitalRead(DRIVE) && !digitalRead(ESTOP)) { //Manual Drive
+  if(digitalRead(DRIVE) && digitalRead(ESTOP)) { //Manual Drive
     if(millis() - prev > 250){
       if(abs(analogRead(X) - x0) > 15 || abs(analogRead(Y) - y0) > 15) {
         byte x = map(analogRead(X) - x0,-x0,1023-x0,0,254);
