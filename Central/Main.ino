@@ -49,10 +49,10 @@ void loop() {
   // put your main code here, to run repeatedly:
   byte avail = Serial.available();
   if(avail) {
-    delayMicroseconds(100);
+    delayMicroseconds(200);
     while(Serial.available() > avail) { //Wait for all data
       avail = Serial.available();
-      delayMicroseconds(100);
+      delayMicroseconds(200);
     }
 
     byte adr = Serial.read();
