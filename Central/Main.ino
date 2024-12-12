@@ -143,6 +143,12 @@ void estop() {
   sei();
   output(0x08, 0x01, 0x00);
   output(0x09, 0x01, 0x00);
+  Wire.beginTransmission(0x11);
+  Wire.write(0x04);
+  Wire.write(0xff);
+  Wire.write(0x00);
+  Wire.write(0x00);
+  Wire.endTransmission();
 }
 
 void unestop() {
@@ -152,6 +158,9 @@ void unestop() {
   delay(100);
   output(0x08, 0x01, 0xff);
   output(0x09, 0x01, 0xff);
+  Wire.beginTransmission(0x11);
+  Wire.write(0x06);
+  Wire.endTransmission();
 
 }
 
