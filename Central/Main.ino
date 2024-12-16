@@ -138,8 +138,6 @@ void isr() {
 }
 
 void estop() {
-  digitalWrite(18,0);
-  digitalWrite(19,0);
   sei();
   output(0x08, 0x01, 0x00);
   output(0x09, 0x01, 0x00);
@@ -152,8 +150,6 @@ void estop() {
 }
 
 void unestop() {
-  digitalWrite(18,1);
-  digitalWrite(19,1);
   sei();
   delay(100);
   output(0x08, 0x01, 0xff);
