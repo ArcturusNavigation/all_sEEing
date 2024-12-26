@@ -144,17 +144,17 @@ float cell1() {
   return analogRead(A3) * (5.0/1023.0);
 }
 float cell2() {
-  return ((analogRead(A2) * (5.0/1023.0)) *2) - cell1();
+  return ((analogRead(A2) * (5.0/1023.0)) * 2.0) - (analogRead(A3) * (5.0/1023.0));
 }
 float cell3() {
-  return ((analogRead(A1) * (5.0/1023.0)) * 3) - (cell2() + cell1());
+  return ((analogRead(A1) * (5.0/1023.0)) * 3.0) - (analogRead(A2) * (5.0/1023.0)) * 2.0));
 }
 float cell4() {
-  return ((analogRead(A0) * (5.0/1023.0)) *4) - (cell3() + cell2() + cell1());
+  return ((analogRead(A0) * (5.0/1023.0)) * 4.0) - (analogRead(A1) * (5.0/1023.0)) * 3.0));
 }
 float cell5() {
-  return ((analogRead(A7) * (5.0/1023.0)) * 5) - (cell4() + cell3() + cell2() + cell1());
+  return ((analogRead(A7) * (5.0/1023.0)) * 5.0) - (analogRead(A0) * (5.0/1023.0)) * 4.0));
 }
 float cell6() {
-  return ((analogRead(A6) * (5.0/1023.0))/6) - (cell5() + cell4() + cell3() + cell2() + cell1());
+  return ((analogRead(A6) * (5.0/1023.0)) * 6.0) - (analogRead(A7) * (5.0/1023.0)) * 5.0));
 }
