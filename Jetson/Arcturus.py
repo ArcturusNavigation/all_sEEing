@@ -381,8 +381,9 @@ class Buck:
         return struct.unpack("<f", self.ser.read(4))
 
 class Mechanisms:
-    def __init__(self,ser):
+    def __init__(self, ser):
         self.ser = ser #pyserial interface
+        self.adr = 0x0B
     
     def wait(self):
         """
@@ -390,62 +391,100 @@ class Mechanisms:
         """
         self.ser.read()
 
-    def output(self, header, gpio, value):
+    def reset_launched(self):
         """
-        Turn load on/off
-
-        Args:
-            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            gpio: 1 for ouptut A, 2 for output B
-            value: 1 for on, 0 for off
+        Reset the balls launched count
         """
-        pin = (header - 1) * 2 + (gpio - 1)
-        self.ser.write(bytes([0x00, 0x01, pin, value]))
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x01])))
         self.wait()
-
-    def setServo(self, header, gpio):
+    
+    def set12V(self, value):
         """
-        Set a pin as Servo
+        Set the 12V output
         
         Args:
-            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            gpio: 1 for ouptut A, 2 for output B
+            value (byte): PWM duty cycle, 0 for off, 255 for on, n for (n/255)% duty cycle 
         """
-        pin = (header - 1) * 2 + (gpio - 1)
-        self.ser.write(bytes([0x00, 0x05, pin]))
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x02, value])))
+        self.wait()
+    
+    def set20V(self, value):
+        """
+        Set the 20V output
+        
+        Args:
+            value (byte): PWM duty cycle, 0 for off, 255 for on, n for (n/255)% duty cycle 
+        """
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x03, value])))
         self.wait()
 
-    def angle(self, header, gpio, value):
+    def stop_servo1(self):
         """
-        Set angle of servo
+        Stop/detach servo 1
+        """
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x04])))
+        self.wait()
+
+    def stop_servo2(self):
+        """
+        Stop/detach servo 2
+        """
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x05])))
+        self.wait()
+
+    def servo1_angle(self, value):
+        """
+        Writes a value to servo1, controlling the shaft accordingly. 
+        On a standard servo, this will set the angle of the shaft (in degrees), moving the shaft to that orientation. 
+        On a continuous rotation servo, this will set the speed of the servo (with 0 being full-speed in one direction, 
+        180 being full speed in the other, and a value near 90 being no movement). Source: Arduino Docs
 
         Args:
-            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            gpio: 1 for ouptut A, 2 for output B
             value: angle (degrees)
         """
-        pin = (header - 1) * 2 + (gpio - 1)
-        self.ser.write(bytes([0x00, 0x02, pin, value]))
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x06, value])))
         self.wait()
 
-    def direction(self, header, value):
+    def servo2_angle(self, value):
         """
-        Set direction of H-Bridge
+        Writes a value to servo2, controlling the shaft accordingly. 
+        On a standard servo, this will set the angle of the shaft (in degrees), moving the shaft to that orientation. 
+        On a continuous rotation servo, this will set the speed of the servo (with 0 being full-speed in one direction, 
+        180 being full speed in the other, and a value near 90 being no movement). Source: Arduino Docs
 
         Args:
-            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            value: 1 for forward, 0 for reverse
+            value: angle (degrees)
         """
-        self.ser.write(bytes([0x00, 0x03, header - 1, value]))
-        self.wait()       
-
-    def output_h(self, header, value):
-        """
-        Turn H-Bridge on/off
-
-        Args:
-            header: 1 for 5VA, 2 for 5VB, 3 for 12V, 4 for Flex A/ADJ2, 5 for Flex B/ADJ1
-            value: 1 for on, 0 for off
-        """
-        self.ser.write(bytes([0x00, 0x04, header - 1, value]))
+        self.ser.write((bytes([(self.adr << 1) + 1, 0x07, value])))
         self.wait()
+
+    def launched(self):
+        """
+        Get how many balls have been launched
+
+        Returns:
+            int: balls launched
+        """
+        self.ser.write((bytes([self.adr << 1, 1, 0x08])))
+        return self.ser.read(1)[0]
+
+    def switch1(self):
+        """
+        Switch 1 status
+
+        Returns:
+            int: 1 if open, 0 if closed
+        """
+        self.ser.write((bytes([self.adr << 1, 1, 0x09])))
+        return self.ser.read(1)[0]
+
+    def switch2(self):
+        """
+        Switch 2 status
+
+        Returns:
+            int: 1 if open, 0 if closed
+        """
+        self.ser.write((bytes([self.adr << 1, 1, 0x10])))
+        return self.ser.read(1)[0]
+    
