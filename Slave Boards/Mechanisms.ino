@@ -3,12 +3,12 @@
 #include <Servo.h>
 #include <Adafruit_VL53L0X.h>
 
-#define SW1 1
-#define SW2 1
-#define SW12V 1
-#define SW20V 1
-#define SERVO1 1
-#define SERVO2 1
+#define SW1 9
+#define SW2 8
+#define SW12V 5
+#define SW20V 3
+#define SERVO1 7
+#define SERVO2 6
 
 #define ADR 0x0B
 
@@ -55,6 +55,12 @@ void loop() {
   }
   if (tof < TOFTHS && millis() - last > TOFCD) {
     launched += 1;
+  }
+  if(digialRead(SW1)) {
+    Servo1.detach();
+  }
+  if(digitalRead(SW2)) {
+    Servo2.detach();
   }
 
 }
