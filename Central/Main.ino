@@ -5,23 +5,6 @@
 #define T1 0x08
 #define T2 0x09
 
-Servo servo1;
-Servo servo2;
-Servo servo3;
-Servo servo4;
-Servo servo5;
-Servo servo6;
-Servo servo7;
-Servo servo8;
-Servo servo9;
-Servo servo10;
-
-Servo servos[10] = {servo1, servo2, servo3, servo4, servo5, servo6, servo7, servo8, servo9, servo10};
-
-byte pins[10] = {10, 9, 8, 6, 0, 11, 30, 1, 12, 4};
-
-byte h_dir[5] = {0, 0, 0, 0, 0};
-
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -30,14 +13,6 @@ void setup() {
   Wire.setWireTimeout();
   
   pinMode(CONN, INPUT);
-  for(byte i = 0; i < 10; i++) {
-    pinMode(pins[i], OUTPUT);
-  }
-  pinMode(18,OUTPUT);
-  pinMode(19,OUTPUT);
-  digitalWrite(18,1);
-  digitalWrite(19,1);
-
 
   attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
   delay(100);
@@ -56,17 +31,7 @@ void loop() {
     }
 
     byte adr = Serial.read();
-    if(adr == 0x00) {
-      byte code = Serial.read();
-      byte header = Serial.read();
-      byte data = 0x00;
-      if(code != 0x05) {
-        data = Serial.read();
-      } 
-      mechanisms(code, header, data);
-      Serial.write(0x01);
-    }
-    else if(adr & 0x01) { //ends in 1, write command
+    if(adr & 0x01) { //ends in 1, write command
       adr = adr >> 1;
       Wire.beginTransmission(adr);
       while(Serial.available()) {
@@ -90,44 +55,6 @@ void loop() {
   }
 }
 
-void mechanisms(byte code, byte pin, byte data) {
-  switch(code) {
-    case 0x01:
-      if(data == 0x00) {
-        digitalWrite(pins[pin], 0);
-      }
-      else {
-        digitalWrite(pins[pin], 1);
-      }
-      break;
-    case 0x02:
-      servos[pin].write(data);
-      break;
-    case 0x03:
-      h_dir[pin] = data;
-      break;
-    case 0x04:
-      if(data == 0x00){
-        digitalWrite(pins[pin * 2 + 1], 0);
-        digitalWrite(pins[pin * 2], 0);
-      }
-      else{
-        if(h_dir[pin] == 0) {
-          digitalWrite(pins[pin * 2 + 1], 0);
-          digitalWrite(pins[pin * 2], 1);
-        }
-        else {
-          digitalWrite(pins[pin * 2], 0);
-          digitalWrite(pins[pin * 2 + 1], 1);
-        }
-      }
-      break;
-    case 0x05:
-      servos[pin].attach(pins[pin]);
-  }
-}
-
-
 void isr() {
   if (digitalRead(CONN) == 0) {
     estop();
@@ -139,9 +66,16 @@ void isr() {
 
 void estop() {
   sei();
-  output(0x08, 0x01, 0x00);
-  output(0x09, 0x01, 0x00);
-  Wire.beginTransmission(0x11);
+
+  output(0x08, 0x01, 0x00); //Turn off thruster batt 1
+  output(0x09, 0x01, 0x00); //Turn off thruster batt 2
+
+  output(0x0B, 0x02, 0x00); //Turn off 12V mechanisms
+  output(0x0B, 0x03, 0x00); //Turn off 20V mechanisms
+  output_nodata(0x0B, 0x04); //Turn off Servo 1
+  output_nodata(0x0B, 0x05); //Turn off Servo 2
+
+  Wire.beginTransmission(0x11); //Write LED strip all red
   Wire.write(0x04);
   Wire.write(0xff);
   Wire.write(0x00);
@@ -151,13 +85,20 @@ void estop() {
 
 void unestop() {
   sei();
-  delay(100);
-  output(0x08, 0x01, 0xff);
-  output(0x09, 0x01, 0xff);
-  Wire.beginTransmission(0x11);
+
+  output(0x08, 0x01, 0xff); //Turn on thruster batt 1
+  output(0x09, 0x01, 0xff); //Turn on thruster batt 2
+
+  Wire.beginTransmission(0x11); //Clear LED strip
   Wire.write(0x06);
   Wire.endTransmission();
 
+}
+
+void output_nodata(byte adr, byte reg) {
+  Wire.beginTransmission(adr);
+  Wire.write(reg);
+  Wire.endTransmission();
 }
 
 void output(byte adr, byte reg, byte val) {
