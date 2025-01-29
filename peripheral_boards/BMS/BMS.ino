@@ -3,15 +3,19 @@
 #include <Adafruit_TLA202x.h>
 #include "max6675.h"
 
-#define CELLS 6
-#define ADR 0x0A
-#define MAXCURRENT 15
-#define MINVOLTAGE 18
-#define MAXCELLDIFF 0.30
+#define CELLS 4
+#define ADR 0x08
+#define MAXCURRENT 50
+#define MINVOLTAGE 14
+#define MAXCELLDIFF 0.25
+#define MAXTEMP 150
 
 int thermoDO = 12;
 int thermoCS = 3;
 int thermoCLK = 13;
+
+bool outcmd = true;
+bool battOK = true;
 
 byte code;
 
@@ -31,7 +35,7 @@ FloatToBytes cell4v;
 FloatToBytes cell5v;
 FloatToBytes cell6v;
 
-float voltages[6] = {cell1v.floatValue, cell2v.floatValue, cell3v.floatValue, cell4v.floatValue, cell5v.floatValue, cell6v.floatValue};
+float voltages[5];
 
 float cell1s;
 float cell2s;
@@ -56,9 +60,7 @@ FloatToBytes batArray;
 void setup() {
   Serial.begin(9600);
   pinMode(2, OUTPUT);
-  #if CELLS == 6
-    digitalWrite(2, 1);
-  #endif
+  digitalWrite(2, 1);
   Wire.begin(ADR); //depends by board
   tla.begin(0x48, &Wire1); // WIRE 1?
   Wire.onReceive(receiveEvent);
@@ -99,7 +101,7 @@ void loop() {
     float R1 = 500.0/1000000.0; // thruster battery
   #endif
 
-  curArray.floatValue = (averageCurrent / 50.0) / R1;
+  curArray.floatValue = (averageCurrent / 50.0) / R1 * .804;//T1 * .865; //EE; * 0.957;
 
 
 
@@ -120,12 +122,18 @@ void loop() {
     cell5s += cell5();
     cell6s += cell6();
   }
-  cell1v.floatValue = cell1s / 100.0 * 1.007;
-  cell2v.floatValue = cell2s / 100.0 * 1.007;
-  cell3v.floatValue = cell3s / 100.0 * 1.002;
-  cell4v.floatValue = cell4s / 100.0 * 1.020;
-  cell5v.floatValue = cell5s / 100.0 * 0.986;
-  cell6v.floatValue = cell6s / 100.0 * 1.035;
+  cell1v.floatValue = cell1s / 100.0 * 1.001;//T1 * 1.004; //EE* 1.007;
+  cell2v.floatValue = cell2s / 100.0 * 1.005;//T1 * 1.002; //EE* 1.007;
+  cell3v.floatValue = cell3s / 100.0 * 1.005;//T1 * 1.020; //EE* 1.002;
+  cell4v.floatValue = cell4s / 100.0 * 1.005;//T1 * 0.998; //EE* 1.020;
+  cell5v.floatValue = cell5s / 100.0; //EE* 0.986;
+  cell6v.floatValue = cell6s / 100.0; //EE* 1.035;
+
+  voltages[0] = cell2v.floatValue;
+  voltages[1] = cell3v.floatValue;
+  voltages[2] = cell4v.floatValue;
+  voltages[3] = cell5v.floatValue;
+  voltages[4] = cell6v.floatValue;
 
   cell1s = 0;
   cell2s = 0;
@@ -133,23 +141,34 @@ void loop() {
   cell4s = 0;
   cell5s = 0;
   cell6s = 0;
+  
+  battOK = true;
 
-  while(curArray.floatValue > MAXCURRENT) { //OVERCURRENT
+  if(curArray.floatValue > MAXCURRENT) { //OVERCURRENT
     Serial.println("OVERCURRENT");
     Serial.println(curArray.floatValue);
-    digitalWrite(2, 0);
-    delay(1000);
+    battOK = false;
   }
 
-  while(batArray.floatValue < MINVOLTAGE) { //UNDERVOLTAGE
+  if(batArray.floatValue < MINVOLTAGE) { //UNDERVOLTAGE
     Serial.println("UNDERVOLTAGE");
     Serial.println(batArray.floatValue);
-    digitalWrite(2, 0);
-    delay(1000);
+    battOK = false;
   }
 
-  while(!isBalanced()) {
+  if(!isBalanced()) { //Cell Imbalance
     Serial.println("UNBALANCED");
+    battOK = false;
+  }
+  
+  if(thermocouple.readFahrenheit() > MAXTEMP) { //OVERTEMP
+    Serial.println("OVERTEMP");
+    battOK = false;
+  }
+
+  if(battOK) {
+    digitalWrite(2, outcmd);
+  } else {
     digitalWrite(2, 0);
     delay(1000);
   }
@@ -167,8 +186,10 @@ void receiveEvent() {
       Serial.println(data, HEX);
       if (data == 0x00) { // Turn output on or off, byte 0x00 for off, anything else for on
         digitalWrite(2, LOW); // turn thing off
+        outcmd = false;
       } else {
         digitalWrite(2, HIGH); // turn thing on
+        outcmd = true;
       }
       break;
   }
@@ -242,16 +263,15 @@ bool isBalanced() {
   float cellmax = cell1v.floatValue;
   float cellmin = cell1v.floatValue;
 
-  for(byte i = 1; i < CELLS; i++) {
+
+  for(byte i = 0; i < CELLS - 1; i++) {
     if(voltages[i] > cellmax) {
       cellmax = voltages[i];
     }else if(voltages[i] < cellmin) {
       cellmin = voltages[i];
     }
 
-  Serial.println(cellmax);
-  Serial.println(cellmin);
-  Serial.println();
+
   }
   return (cellmax - cellmin) < MAXCELLDIFF;
 }
