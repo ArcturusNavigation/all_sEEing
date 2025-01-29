@@ -67,9 +67,8 @@ void setup() {
 
 void loop() {
   // Battery voltage
-  batteryVoltage = tla.readOnce(TLA202x_CHANNEL_0); // AC Voltage     
+  batteryVoltage = tla.readOnce(TLA202x_CHANNEL_0);
   float R2 = 20.; // 20k
-  // TODO: comment out the unused resistor value
   #if CELLS == 6
     float R3 = 1.5;
   #else
@@ -242,27 +241,17 @@ float cell6() {
 bool isBalanced() {
   float cellmax = cell1v.floatValue;
   float cellmin = cell1v.floatValue;
-  Serial.println(cellmax);
-  Serial.println(cellmin);
-  Serial.println();
+
   for(byte i = 1; i < CELLS; i++) {
-    if(voltages[i] - cellmax > MAXCELLDIFF) {
-      Serial.print("OVER ");
-      Serial.println(i + 1);
-      Serial.println(voltages[i]);
-      Serial.println();
-      return false;
-    } else if(voltages[i] > cellmax) {
+    if(voltages[i] > cellmax) {
       cellmax = voltages[i];
-    } else if (cellmin - voltages[i] > MAXCELLDIFF) {
-      return false;
-    }
-    else if(voltages[i] < cellmin) {
+    }else if(voltages[i] < cellmin) {
       cellmin = voltages[i];
     }
+
   Serial.println(cellmax);
   Serial.println(cellmin);
   Serial.println();
   }
-  return true;
+  return (cellmax - cellmin) < MAXCELLDIFF;
 }
