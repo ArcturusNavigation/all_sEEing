@@ -39,12 +39,12 @@ void setup() {
   digitalWrite(3,1);
   Serial.begin(9600);
   delay(100);
-  regWrite(ADJ1, 0x02, 0x00); //Disable current limits
-  regWrite(ADJ2, 0x02, 0x00);
+  regWrite(ADJ1, 0x02, 0xFF); //Set current limit 6.35 A
+  regWrite(ADJ2, 0x02, 0xFF);
   writeFB(ADJ1, 0x0230); //Set ADJ1 = 12V
   writeFB(ADJ2, 0x03C0); //Set ADJ2 = 20V
-  regWrite(ADJ1, 0x06, 0xA0); //Enable Outputs
-  regWrite(ADJ2, 0x06, 0xA0);
+  //regWrite(ADJ1, 0x06, 0xA0); //Enable Outputs
+  //regWrite(ADJ2, 0x06, 0xA0);
 }
 
 void loop() {
