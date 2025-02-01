@@ -5,31 +5,24 @@ import time
 ser = serial.Serial("COM16", 115200, timeout = 1)
 
 mech = Arcturus.Mechanisms(ser)
+buck = Arcturus.Buck(ser)
 
 print("Resetting balls launched count")
 mech.reset_launched()
 
-print("Setting 12V full power")
-mech.set12V(255)
-time.sleep(5)
-
-print("Setting 12V half power")
-mech.set12V(128)
+print("Turning on 12V")
+buck.adj1_en(1)
 time.sleep(5)
 
 print("Turning off 12V")
-mech.set12V(0)
+buck.adj_en(0)
 
-print("Setting 20V full power")
-mech.set20V(255)
-time.sleep(5)
-
-print("Setting 20V half power")
-mech.set20V(128)
+print("Turning on 20V")
+buck.adj2_en(1)
 time.sleep(5)
 
 print("Turning off 20V")
-mech.set12V(0)
+buck.ad2_en(0)
 
 print("Setting Servo 1 45 degrees / half power reverse on a continuous servo")
 mech.servo1_angle(45)
