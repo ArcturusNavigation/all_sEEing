@@ -56,10 +56,10 @@ void loop() {
   if (tof < TOFTHS && millis() - last > TOFCD) {
     launched += 1;
   }
-  if(digialRead(SW1)) {
+  if(!digitalRead(SW1)) {
     Servo1.detach();
   }
-  if(digitalRead(SW2)) {
+  if(!digitalRead(SW2)) {
     Servo2.detach();
   }
 
