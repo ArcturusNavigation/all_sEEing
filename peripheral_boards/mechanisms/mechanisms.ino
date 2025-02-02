@@ -12,14 +12,14 @@
 
 #define ADR 0x0B
 
-#define TOFTHS 10 //Threshold for detecting ball (mm)
+#define TOFTHS 50 //Threshold for detecting ball (mm)
 #define TOFCD 500 //Cooldown after detection (ms)
 
 
 byte code;
 
 short tof;
-byte launched = 0;
+volatile byte launched = 0;
 unsigned long last = 0;
 
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
@@ -36,8 +36,6 @@ void setup() {
   digitalWrite(SW12V, 0);
   digitalWrite(SW20V, 0);
 
-  Servo1.attach(SERVO1);
-  Servo2.attach(SERVO2);
 
   Wire.begin(ADR);
   Wire1.begin();
