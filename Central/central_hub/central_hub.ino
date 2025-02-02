@@ -2,6 +2,8 @@
 #include <Servo.h>
 
 #define CONN 7
+#define MANESTOP 1
+
 #define T1 0x08
 #define T2 0x09
 
@@ -14,8 +16,10 @@ void setup() {
   Wire.setWireTimeout();
   
   pinMode(CONN, INPUT);
+  pinMode(MANESTOP, INPUT_PULLUP);
 
   attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(MANESTOP), isr, CHANGE);
 }
 
 void loop() {
@@ -56,7 +60,7 @@ void loop() {
 }
 
 void isr() {
-  if (digitalRead(CONN) == 0) {
+  if (!digitalRead(CONN) || digitalRead(MANESTOP)) {
     estop();
   }
   else {
