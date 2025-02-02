@@ -5,19 +5,17 @@
 #define T1 0x08
 #define T2 0x09
 
+bool block = false;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  
   Wire.begin();
   Wire.setWireTimeout();
   
   pinMode(CONN, INPUT);
 
   attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
-  delay(100);
-  output(T1, 0x01, 0xff);
-  output(T2, 0x01, 0xff);
 }
 
 void loop() {
@@ -33,11 +31,13 @@ void loop() {
     byte adr = Serial.read();
     if(adr & 0x01) { //ends in 1, write command
       adr = adr >> 1;
-      Wire.beginTransmission(adr);
-      while(Serial.available()) {
-        Wire.write(Serial.read());
+      if(!(block && (adr == 0x0B || adr == 0x13))) {
+        Wire.beginTransmission(adr);
+        while(Serial.available()) {
+          Wire.write(Serial.read());
+        }
+        Wire.endTransmission();
       }
-      Wire.endTransmission();
       Serial.write(0x01); //ready for next cmd
     }
     else { //read
@@ -70,17 +70,19 @@ void estop() {
   output(0x08, 0x01, 0x00); //Turn off thruster batt 1
   output(0x09, 0x01, 0x00); //Turn off thruster batt 2
 
-  output(0x0B, 0x02, 0x00); //Turn off 12V mechanisms
-  output(0x0B, 0x03, 0x00); //Turn off 20V mechanisms
+  output(0x13, 0x06, 0x00); //Turn off 12V mechanisms
+  output(0x13, 0x07, 0x00); //Turn off 20V mechanisms
   output_nodata(0x0B, 0x04); //Turn off Servo 1
   output_nodata(0x0B, 0x05); //Turn off Servo 2
-
+  
+  block = true;
+  /*
   Wire.beginTransmission(0x11); //Write LED strip all red
   Wire.write(0x04);
   Wire.write(0xff);
   Wire.write(0x00);
   Wire.write(0x00);
-  Wire.endTransmission();
+  Wire.endTransmission();*/
 }
 
 void unestop() {
@@ -89,9 +91,11 @@ void unestop() {
   output(0x08, 0x01, 0xff); //Turn on thruster batt 1
   output(0x09, 0x01, 0xff); //Turn on thruster batt 2
 
-  Wire.beginTransmission(0x11); //Clear LED strip
+  /*Wire.beginTransmission(0x11); //Clear LED strip
   Wire.write(0x06);
-  Wire.endTransmission();
+  Wire.endTransmission();*/
+
+  block = false;
 
 }
 
