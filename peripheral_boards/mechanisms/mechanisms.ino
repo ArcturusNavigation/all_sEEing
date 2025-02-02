@@ -52,10 +52,12 @@ void setup() {
 void loop() {
   if (lox.isRangeComplete()) {
     tof = lox.readRange();
+    if (tof < TOFTHS && millis() - last > TOFCD) {
+      launched += 1;
+      last = millis();
+    }
   }
-  if (tof < TOFTHS && millis() - last > TOFCD) {
-    launched += 1;
-  }
+
   if(!digitalRead(SW1)) {
     Servo1.detach();
   }
