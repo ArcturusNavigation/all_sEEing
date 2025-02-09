@@ -117,6 +117,8 @@ void parseRx() {
     else if(status == 'C'){
       estop = false;
       drive = true;
+      x_pos.f = 0.0;
+      y_pos.f = 0.0;
     }
     else{
       estop = false;
