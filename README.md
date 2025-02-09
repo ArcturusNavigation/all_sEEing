@@ -2,5 +2,12 @@
 To enable easy syncronization of Arduino code, please ensure that the .ino file is contained within a folder of the same name. 
 
 
+## peripheral\_boards
+Contains code for all on-boat boards except for the Central Hub
 
-* Note to nhaefner: write something actually useful here when it isn't 2 am
+## Central
+Contains firmware and test for Central hub
+
+## Shore
+Contains on-shore boards. Currently only ESTOP.
+	
