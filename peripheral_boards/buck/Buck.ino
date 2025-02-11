@@ -10,7 +10,6 @@ byte adj1_en = 0;
 int adj2_fb = 0xffff;
 byte adj2_en = 0;
 
-
 typedef union i2cfloat{
   float f;
   byte b[4];
@@ -27,6 +26,9 @@ byte en;
 i2cfloat data;
 i2cint fb;
 
+int vadj1 = 0x0230;
+int vadj2 = 0x03C0;
+
 void setup() {
   Wire1.begin();
   Wire.begin(0x13);
@@ -41,27 +43,37 @@ void setup() {
   delay(100);
   regWrite(ADJ1, 0x02, 0xFF); //Set current limit 6.35 A
   regWrite(ADJ2, 0x02, 0xFF);
-  writeFB(ADJ1, 0x0230); //Set ADJ1 = 12V
-  writeFB(ADJ2, 0x03C0); //Set ADJ2 = 20V
+  //writeFB(ADJ1, 0x0230); //Set ADJ1 = 12V
+  //writeFB(ADJ2, 0x03C0); //Set ADJ2 = 20V
   //regWrite(ADJ1, 0x06, 0xA0); //Enable Outputs
   //regWrite(ADJ2, 0x06, 0xA0);
 }
 
 void loop() {
   if(adj1_fb != 0xffff){
-    writeFB(ADJ1, adj1_fb);
+    vadj1 = adj1_fb;
     adj1_fb = 0xffff;
   }
   if(adj2_fb != 0xffff){
-    writeFB(ADJ2, adj2_fb);
+    vadj2 = adj2_fb;
     adj2_fb = 0xffff;
   }
   if(adj1_en != 0x00){
+    writeFB(ADJ1, 0x00D2);
     regWrite(ADJ1, 0x06, adj1_en);
+    for(int i = 0x00D2; i < vadj1; i++) {
+      writeFB(ADJ1, i);
+      delay(5);
+    }
     adj1_en = 0x00;
   }
   if(adj2_en != 0x00){
+    writeFB(ADJ2, 0x00D2);
     regWrite(ADJ2, 0x06, adj2_en);
+    for(int i = 0x00D2; i < vadj2; i++) {
+      writeFB(ADJ2, i);
+      delay(5);
+    }
     adj2_en = 0x00;
   }
 }
