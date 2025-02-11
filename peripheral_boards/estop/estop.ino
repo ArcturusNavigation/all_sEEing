@@ -39,7 +39,7 @@ void setup() {
   pinMode(5, OUTPUT);
 
   digitalWrite(4, 0);
-  digitalWrite(5, 1);
+  digitalWrite(5, 0);
   Serial.begin(9600);
   loraSer.begin(9600);
   delay(1000);
