@@ -126,6 +126,7 @@ void parseRx() {
     }
   }
   else{
+  	drive = true;
     char xarr[2] = {dtaStr.charAt(0),dtaStr.charAt(1)};
     byte x = strtol(xarr,NULL,16);
     float x_f = (float) x;
