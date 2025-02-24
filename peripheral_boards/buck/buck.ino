@@ -68,6 +68,7 @@ void loop() {
     adj1_en = 0x00;
   } else if(adj1_en == 0x20) {
 	  regWrite(ADJ1, 0x06, adj1_en);
+	  adj1_en = 0x00;
   }
   if(adj2_en == 0xA0){
     writeFB(ADJ2, 0x00D2);
@@ -79,6 +80,7 @@ void loop() {
     adj2_en = 0x00;
   } else if(adj2_en == 0x20) {
   	regWrite(ADJ2, 0x06, adj2_en);
+	adj2_en = 0x00;
   }
 }
 
