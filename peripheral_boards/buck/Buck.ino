@@ -58,7 +58,7 @@ void loop() {
     vadj2 = adj2_fb;
     adj2_fb = 0xffff;
   }
-  if(adj1_en != 0x00){
+  if(adj1_en == 0xA0){
     writeFB(ADJ1, 0x00D2);
     regWrite(ADJ1, 0x06, adj1_en);
     for(int i = 0x00D2; i < vadj1; i++) {
@@ -66,8 +66,10 @@ void loop() {
       delay(5);
     }
     adj1_en = 0x00;
+  } else if(adj1_en == 0x20) {
+	  regWrite(ADJ1, 0x06, adj1_en);
   }
-  if(adj2_en != 0x00){
+  if(adj2_en == 0xA0){
     writeFB(ADJ2, 0x00D2);
     regWrite(ADJ2, 0x06, adj2_en);
     for(int i = 0x00D2; i < vadj2; i++) {
@@ -75,6 +77,8 @@ void loop() {
       delay(5);
     }
     adj2_en = 0x00;
+  } else if(adj2_en == 0x20) {
+  	regWrite(ADJ2, 0x06, adj2_en);
   }
 }
 
