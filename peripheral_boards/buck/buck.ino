@@ -4,11 +4,11 @@
 #define ADJ1 0x74
 #define ADJ2 0x75
 
-int adj1_fb = 0xffff;
-byte adj1_en = 0;
+volatile int adj1_fb = 0xffff;
+volatile byte adj1_en = 0;
 
-int adj2_fb = 0xffff;
-byte adj2_en = 0;
+volatile int adj2_fb = 0xffff;
+volatile byte adj2_en = 0;
 
 typedef union i2cfloat{
   float f;
@@ -63,7 +63,12 @@ void loop() {
     regWrite(ADJ1, 0x06, adj1_en);
     for(int i = 0x00D2; i < vadj1; i++) {
       writeFB(ADJ1, i);
-      delay(5);
+      if(adj1_en == 0x20) {
+        regWrite(ADJ1, 0x06, adj1_en);
+        break;
+      } else {
+        delay(5);
+      }
     }
     adj1_en = 0x00;
   } else if(adj1_en == 0x20) {
@@ -75,7 +80,13 @@ void loop() {
     regWrite(ADJ2, 0x06, adj2_en);
     for(int i = 0x00D2; i < vadj2; i++) {
       writeFB(ADJ2, i);
+      if(adj2_en == 0x20) {
+        regWrite(ADJ2, 0x06, adj2_en);
+        break;
+      }
+      else {
       delay(5);
+      }
     }
     adj2_en = 0x00;
   } else if(adj2_en == 0x20) {
