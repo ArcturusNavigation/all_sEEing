@@ -20,6 +20,9 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
   attachInterrupt(digitalPinToInterrupt(MANESTOP), isr, CHANGE);
+
+  output(0x08, 0x01, 0x00); //Turn off thruster batt 1
+  output(0x09, 0x01, 0x00); //Turn off thruster batt 2
 }
 
 void loop() {
