@@ -15,14 +15,14 @@ void setup() {
   Wire.begin();
   Wire.setWireTimeout();
   
-  pinMode(CONN, INPUT);
-  pinMode(MANESTOP, INPUT_PULLUP);
+  //pinMode(CONN, INPUT);
+  pinMode(MANESTOP, INPUT);//_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(CONN), isr, CHANGE);
   attachInterrupt(digitalPinToInterrupt(MANESTOP), isr, CHANGE);
 
-  output(0x08, 0x01, 0x00); //Turn off thruster batt 1
-  output(0x09, 0x01, 0x00); //Turn off thruster batt 2
+  //output(0x08, 0x01, 0x00); //Turn off thruster batt 1
+  //output(0x09, 0x01, 0x00); //Turn off thruster batt 2
 }
 
 void loop() {
@@ -63,7 +63,7 @@ void loop() {
 }
 
 void isr() {
-  if (!digitalRead(CONN) || digitalRead(MANESTOP)) {
+  if (!digitalRead(MANESTOP) {//(!digitalRead(CONN) || digitalRead(MANESTOP)) {
     estop();
   }
   else {
@@ -74,8 +74,8 @@ void isr() {
 void estop() {
   sei();
 
-  output(0x08, 0x01, 0x00); //Turn off thruster batt 1
-  output(0x09, 0x01, 0x00); //Turn off thruster batt 2
+  //output(0x08, 0x01, 0x00); //Turn off thruster batt 1
+  //output(0x09, 0x01, 0x00); //Turn off thruster batt 2
 
   output(0x13, 0x06, 0x00); //Turn off 12V mechanisms
   output(0x13, 0x07, 0x00); //Turn off 20V mechanisms
@@ -95,8 +95,8 @@ void estop() {
 void unestop() {
   sei();
 
-  output(0x08, 0x01, 0xff); //Turn on thruster batt 1
-  output(0x09, 0x01, 0xff); //Turn on thruster batt 2
+  //output(0x08, 0x01, 0xff); //Turn on thruster batt 1
+  //output(0x09, 0x01, 0xff); //Turn on thruster batt 2
 
   /*Wire.beginTransmission(0x11); //Clear LED strip
   Wire.write(0x06);
