@@ -63,7 +63,7 @@ void loop() {
 }
 
 void isr() {
-  if (!digitalRead(MANESTOP) {//(!digitalRead(CONN) || digitalRead(MANESTOP)) {
+  if (!digitalRead(MANESTOP)) {//(!digitalRead(CONN) || digitalRead(MANESTOP)) {
     estop();
   }
   else {
