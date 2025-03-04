@@ -3,6 +3,8 @@
 #include <Servo.h>
 #include <Adafruit_VL53L0X.h>
 
+#define ZERO 90
+
 #define SW1 9
 #define SW2 8
 #define SW12V 5
@@ -28,6 +30,11 @@ Servo Servo1;
 Servo Servo2;
 
 void setup() {
+  Servo1.attach(SERVO1);
+  Servo2.attach(SERVO2);
+  Servo1.write(ZERO);
+  Servo2.write(ZERO);
+  
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
   pinMode(SW12V, OUTPUT);
@@ -82,11 +89,11 @@ void receiveEvent() {
       break;
     case 0x04:
       //Turn off Servo 1
-      Servo1.detach();
+      Servo1.write(ZERO);//Servo1.detach();
       break;
     case 0x05:
       //Turn off Servo 2
-      Servo2.detach();
+      Servo2.write(ZERO);//Servo2.detach();
       break;
     case 0x06:
       //Set Servo 1 to given position
