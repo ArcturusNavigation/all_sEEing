@@ -82,7 +82,7 @@ void estop() {
   output_nodata(0x0B, 0x04); //Turn off Servo 1
   output_nodata(0x0B, 0x05); //Turn off Servo 2
   
-  block = true;
+  //block = true;
   /*
   Wire.beginTransmission(0x11); //Write LED strip all red
   Wire.write(0x04);
