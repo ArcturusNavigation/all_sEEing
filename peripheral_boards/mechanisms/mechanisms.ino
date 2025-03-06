@@ -31,6 +31,8 @@ Servo Servo1;
 Servo Servo2;
 
 void setup() {
+
+  Serial.begin(9600);
   
   pinMode(SW1, INPUT);
   pinMode(SW2, INPUT);
@@ -44,7 +46,9 @@ void setup() {
   Wire.begin(ADR);
   Wire1.begin();
 
-  lox.begin(0x29, false, &Wire1);
+  if(!lox.begin(0x29, false, &Wire1)) {
+    Serial.println("LOX FAIL");
+  }
   lox.startRangeContinuous();
 
   Wire.onReceive(receiveEvent);
@@ -70,6 +74,7 @@ void loop() {
 }
 
 void receiveEvent() {
+  Serial.println("REC");
   code = Wire.read();
   switch(code) {
     case 0x01:
