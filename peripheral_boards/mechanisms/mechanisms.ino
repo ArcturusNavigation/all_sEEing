@@ -14,6 +14,7 @@
 
 #define ADR 0x0B
 
+#define LOWTH 20
 #define TOFTHS 50 //Threshold for detecting ball (mm)
 #define TOFCD 500 //Cooldown after detection (ms)
 
@@ -57,7 +58,7 @@ void setup() {
 void loop() {
   if (lox.isRangeComplete()) {
     tof = lox.readRange();
-    if (tof < TOFTHS && millis() - last > TOFCD) {
+    if (tof < TOFTHS && millis() - last > TOFCD && tof > LOWTH) {
       launched += 1;
       last = millis();
     }
