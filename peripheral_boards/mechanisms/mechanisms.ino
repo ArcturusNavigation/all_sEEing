@@ -14,7 +14,7 @@
 
 #define ADR 0x0B
 
-#define LOWTH 20
+#define LOWTH 5
 #define TOFTHS 50 //Threshold for detecting ball (mm)
 #define TOFCD 500 //Cooldown after detection (ms)
 
