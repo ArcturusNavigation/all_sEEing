@@ -16,7 +16,7 @@
 
 #define LOWTH 5
 #define TOFTHS 50 //Threshold for detecting ball (mm)
-#define TOFCD 500 //Cooldown after detection (ms)
+#define TOFCD 1500 //Cooldown after detection (ms)
 
 
 byte code;
