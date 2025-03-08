@@ -9,6 +9,9 @@
 
 bool block = false;
 
+byte mech_len[12] = {0,0,1,1,0,0,1,1,0,0,0,0};
+byte buck_len[12] = {0,0,0,0,0,0,1,1,4,4,1,1};
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -29,14 +32,23 @@ void loop() {
   // put your main code here, to run repeatedly:
   byte avail = Serial.available();
   if(avail) {
-    delayMicroseconds(200);
+    byte adr = Serial.read();
+    while(!Serial.available()) {};
+
+    /*delayMicroseconds(200);
     while(Serial.available() > avail) { //Wait for all data
       avail = Serial.available();
       delayMicroseconds(200);
     }
 
-    byte adr = Serial.read();
+    byte adr = Serial.read();*/
     if(adr & 0x01) { //ends in 1, write command
+      byte cmd = Serial.peek();
+      if(adr == 0x0B) {
+        while(Serial.available() < mech_len[cmd] + 1) {}
+      } else if(adr == 0x13) {
+        while(Serial.available() < buck_len[cmd] + 1) {}
+      }
       adr = adr >> 1;
       if(!(block && (adr == 0x0B || adr == 0x13))) {
         Wire.beginTransmission(adr);
@@ -44,10 +56,15 @@ void loop() {
           Wire.write(Serial.read());
         }
         Wire.endTransmission();
+      } else {
+        while(Serial.available()) {
+          Serial.read();
+        }
       }
       Serial.write(0x01); //ready for next cmd
     }
     else { //read
+      while(Serial.available() < 2) {};
       adr = adr >> 1;
       byte qty = Serial.read(); //how many
       byte reg = Serial.read(); //instruction code
