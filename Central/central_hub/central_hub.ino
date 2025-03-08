@@ -7,7 +7,7 @@
 #define T1 0x08
 #define T2 0x09
 
-bool block = false;
+volatile bool block = false;
 
 byte mech_len[12] = {0,0,1,1,0,0,1,1,0,0,0,0};
 byte buck_len[12] = {0,0,0,0,0,0,1,1,4,4,1,1};
@@ -43,13 +43,13 @@ void loop() {
 
     byte adr = Serial.read();*/
     if(adr & 0x01) { //ends in 1, write command
+      adr = adr >> 1;
       byte cmd = Serial.peek();
       if(adr == 0x0B) {
         while(Serial.available() < mech_len[cmd] + 1) {}
       } else if(adr == 0x13) {
         while(Serial.available() < buck_len[cmd] + 1) {}
       }
-      adr = adr >> 1;
       if(!(block && (adr == 0x0B || adr == 0x13))) {
         Wire.beginTransmission(adr);
         while(Serial.available()) {
@@ -89,6 +89,7 @@ void isr() {
 }
 
 void estop() {
+  block = true;
   sei();
 
   //output(0x08, 0x01, 0x00); //Turn off thruster batt 1
@@ -99,7 +100,7 @@ void estop() {
   output_nodata(0x0B, 0x04); //Turn off Servo 1
   output_nodata(0x0B, 0x05); //Turn off Servo 2
   
-  block = true;
+  // block = true;
   /*
   Wire.beginTransmission(0x11); //Write LED strip all red
   Wire.write(0x04);
@@ -110,6 +111,7 @@ void estop() {
 }
 
 void unestop() {
+  block = false;
   sei();
 
   //output(0x08, 0x01, 0xff); //Turn on thruster batt 1
