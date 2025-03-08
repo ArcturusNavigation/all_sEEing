@@ -96,7 +96,9 @@ void loop() {
 }
 
 void receiveEvent() {
-	code = Wire.read();
+  code = Wire.read();
+  Serial.print("REC: 0x");
+  Serial.println(code, HEX);
   switch(code) {
     case 0x06:
       en = Wire.read();
