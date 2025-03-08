@@ -13,6 +13,7 @@ int y0;
 unsigned long prev = millis();
 
 void setup() {
+  Serial.begin(9600);
   pinMode(4, OUTPUT); //lora rst
   pinMode(5, OUTPUT); //batt led
   digitalWrite(4, 0);
@@ -29,17 +30,22 @@ void setup() {
   delay(200);
 }
 void loop() {
+  Serial.print("DRIVE: ");
+  Serial.println(digitalRead(DRIVE));
   if(millis() - prev > 250 && digitalRead(ESTOP) && !digitalRead(DRIVE)) { //Heartbeat
+  	Serial.println("HEARTBEAT");
     loraSer.write("AT+TEST=TXLRPKT, \"AA\"\n");
     prev = millis();
   }
   if(!digitalRead(ESTOP)) { //ESTOP
+  	Serial.println("ESTOPPED");
     if(millis() - prev > 250){
       loraSer.write("AT+TEST=TXLRPKT, \"FF\"\n");
       prev = millis();
     }
   }
   if(digitalRead(DRIVE) && digitalRead(ESTOP)) { //Manual Drive
+  	Serial.print("MANUAL DRIVE");
     if(millis() - prev > 250){
       if(abs(analogRead(X) - x0) > 15 || abs(analogRead(Y) - y0) > 15) {
         byte x = map(analogRead(X) - x0,-x0,1023-x0,0,254);
@@ -47,6 +53,12 @@ void loop() {
         
         if (analogRead(X) == x0){x = 127;};
         if (analogRead(Y) == y0){y = 127;};
+
+		Serial.print(" X: ");
+		Serial.print(x);
+		Serial.print(" Y: ");
+		Serial.print(y);
+		Serial.println();
         
         loraSer.write("AT+TEST=TXLRPKT, \"");
         loraSer.print(x < 0x10 ? " 0" : "");
@@ -56,6 +68,7 @@ void loop() {
         loraSer.write("\"\n");
       }
       else {
+	  	Serial.println("CC");
         loraSer.write("AT+TEST=TXLRPKT, \"CC\"\n");
       }
       prev = millis();
