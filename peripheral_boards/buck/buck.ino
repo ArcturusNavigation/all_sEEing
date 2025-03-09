@@ -39,7 +39,7 @@ void setup() {
   pinMode(4,OUTPUT);
   digitalWrite(3,0);
   digitalWrite(3,1);
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(100);
   regWrite(ADJ1, 0x02, 0xFF); //Set current limit 6.35 A
   regWrite(ADJ2, 0x02, 0xFF);
@@ -96,7 +96,9 @@ void loop() {
 }
 
 void receiveEvent() {
-	code = Wire.read();
+  code = Wire.read();
+  Serial.print("REC: 0x");
+  Serial.println(code, HEX);
   switch(code) {
     case 0x06:
       en = Wire.read();
