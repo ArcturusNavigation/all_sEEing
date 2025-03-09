@@ -95,10 +95,15 @@ void estop() {
   //output(0x08, 0x01, 0x00); //Turn off thruster batt 1
   //output(0x09, 0x01, 0x00); //Turn off thruster batt 2
 
+  delay(10);
   output(0x13, 0x06, 0x00); //Turn off 12V mechanisms
+  delay(10);
   output(0x13, 0x07, 0x00); //Turn off 20V mechanisms
+  delay(10);
   output_nodata(0x0B, 0x04); //Turn off Servo 1
+  delay(10);
   output_nodata(0x0B, 0x05); //Turn off Servo 2
+  delay(10);
   
   // block = true;
   /*
@@ -112,7 +117,7 @@ void estop() {
 
 void unestop() {
   block = false;
-  sei();
+  // sei();
 
   //output(0x08, 0x01, 0xff); //Turn on thruster batt 1
   //output(0x09, 0x01, 0xff); //Turn on thruster batt 2
@@ -121,7 +126,7 @@ void unestop() {
   Wire.write(0x06);
   Wire.endTransmission();*/
 
-  block = false;
+  // block = false;
 
 }
 
