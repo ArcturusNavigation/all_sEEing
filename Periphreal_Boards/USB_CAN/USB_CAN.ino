@@ -7,15 +7,14 @@
 
 uint8_t lengths[16][11] = {
   {},
-  {},
+  {4, 4, 4, 4, 1, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1}
 };
 
+uint8_t mainpwr[20];
 uint8_t eebms[44];
 
-uint8_t* vals[16] = {NULL, NULL, eebms};
-
-uint8_t maxLengths[16] = {0, 0, 4};
+uint8_t* vals[16] = {NULL, mainpwr, eebms};
 
 static CAN_message_t CAN_TX_msg;
 static CAN_message_t CAN_RX_msg;
@@ -40,7 +39,7 @@ void loop() {
 	if (can.read(CAN_RX_msg)) {
     boardID = CAN_RX_msg.id >> 7;
     messageID = CAN_RX_msg.id & 0x7F;
-    memcpy(vals[boardID] + maxLengths[boardID] * messageID, CAN_RX_msg.buf, CAN_RX_msg.len);
+    memcpy(vals[boardID] + 4 * messageID, CAN_RX_msg.buf, CAN_RX_msg.len);
   }
 
   if(Serial.available()) {
@@ -70,7 +69,7 @@ void loop() {
       Serial.write(0x00); //Indicate command done 
 
     } else { //PC reading from Periphreal / Periphreal sending data to PC
-      memcpy(serialBuf, vals[boardID] + maxLengths[boardID] * messageID, len);
+      memcpy(serialBuf, vals[boardID] + 4 * messageID, len);
       Serial.write(serialBuf, len);
     }
   }
