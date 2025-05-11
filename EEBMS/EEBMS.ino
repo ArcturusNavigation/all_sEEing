@@ -36,7 +36,7 @@ void setup() {
   bms.begin();
   delay(100);
 	can.setBaudRate(500000);
-	can.begin();
+	can.begin(true);
 	can.setFilterSingleMask(0, (BOARD_ID << 7), (0x0F << 7), STD);
 }
 
