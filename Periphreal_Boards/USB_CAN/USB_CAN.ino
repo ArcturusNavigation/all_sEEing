@@ -8,13 +8,17 @@
 uint8_t lengths[16][11] = {
   {},
   {4, 4, 4, 4, 1, 1, 1},
+  {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
+  {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1}
 };
 
 uint8_t mainpwr[20];
 uint8_t eebms[44];
+uint8_t thrA[44];
+uint8_t thrB[44];
 
-uint8_t* vals[16] = {NULL, mainpwr, eebms};
+uint8_t* vals[16] = {NULL, mainpwr, eebms, thrA, thrB};
 
 static CAN_message_t CAN_TX_msg;
 static CAN_message_t CAN_RX_msg;
@@ -31,7 +35,7 @@ uint8_t messageID;
 
 void setup() {
   Serial.begin(115200);
-	can.setBaudRate(500000);
+	can.setBaudRate(125000);
 	can.begin(true);
 }
 
@@ -64,9 +68,9 @@ void loop() {
           return;
         }
       }
-      Serial.readBytes(serialBuf, len);
+      Serial.readBytes((char*) serialBuf, len);
       sendMsg((boardID << 7) + messageID, serialBuf, len);
-      Serial.write(0x00); //Indicate command done 
+      Serial.write((char) 0x00); //Indicate command done 
 
     } else { //PC reading from Periphreal / Periphreal sending data to PC
       memcpy(serialBuf, vals[boardID] + 4 * messageID, len);

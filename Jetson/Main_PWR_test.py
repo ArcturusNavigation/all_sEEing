@@ -2,7 +2,7 @@ import ArcturusEE
 import serial
 import time
 
-ser = serial.Serial("COM16", 115200, timeout = 1)
+ser = serial.Serial("COM21", 115200, timeout = 1)
 
 main_pwr = ArcturusEE.main_power(ser)
 

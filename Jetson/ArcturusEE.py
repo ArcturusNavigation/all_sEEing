@@ -19,7 +19,7 @@ class BMS:
     
     def temp(self):
         self.ser.write((bytes([self.id, 0x08])))
-        return struct.unpack("<f", self.ser.read(4))[0]
+        return round(struct.unpack("<f", self.ser.read(4))[0], 2)
     
     def output(self):
         self.ser.write((bytes([self.id, 0x09])))

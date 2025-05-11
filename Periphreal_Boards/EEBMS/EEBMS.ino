@@ -35,7 +35,7 @@ void setup() {
   Wire.setSDA(PB7);
   bms.begin();
   delay(100);
-	can.setBaudRate(500000);
+	can.setBaudRate(125000);
 	can.begin(true);
 	can.setFilterSingleMask(0, (BOARD_ID << 7), (0x0F << 7), STD);
 }
@@ -61,7 +61,7 @@ void loop() {
     temp = bms.temp();
     sendMsg(0x08, (uint8_t*) &temp, sizeof(temp));
 
-    dsg = !digitalRead(dsg);
+    dsg = !digitalRead(DSG);
     sendMsg(0x09, (uint8_t*) &dsg, sizeof(dsg));
     
     estop = !digitalRead(ESTOP);
