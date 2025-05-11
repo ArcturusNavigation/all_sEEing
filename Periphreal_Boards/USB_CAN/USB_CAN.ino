@@ -66,7 +66,8 @@ void loop() {
         }
       }
       Serial.readBytes(serialBuf, len);
-      sendMsg((boardID << 7) + messageID, serialBuf, len); 
+      sendMsg((boardID << 7) + messageID, serialBuf, len);
+      Serial.write(0x00); //Indicate command done 
 
     } else { //PC reading from Periphreal / Periphreal sending data to PC
       memcpy(serialBuf, vals[boardID] + maxLengths[boardID] * messageID, len);
