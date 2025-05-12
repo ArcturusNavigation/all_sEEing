@@ -6,7 +6,7 @@
 #define TIMEOUT 100
 
 uint8_t lengths[16][11] = {
-  {1, 1, 1, 1, 1, 1},
+  {1, 1, 1, 1, 1, 1, 1},
   {4, 4, 4, 4, 1, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
@@ -15,7 +15,7 @@ uint8_t lengths[16][11] = {
   {1, 1, 4, 4, 4}
 };
 
-uint8_t estop[24];
+uint8_t estop[28];
 uint8_t mainpwr[20];
 uint8_t eebms[44];
 uint8_t thrA[44];
