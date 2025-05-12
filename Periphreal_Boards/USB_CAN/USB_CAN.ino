@@ -6,19 +6,24 @@
 #define TIMEOUT 100
 
 uint8_t lengths[16][11] = {
-  {},
+  {1, 1, 1, 1, 1, 1},
   {4, 4, 4, 4, 1, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
-  {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1}
+  {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
+  {1, 1, 4, 4, 4},
+  {1, 1, 4, 4, 4}
 };
 
+uint8_t estop[24];
 uint8_t mainpwr[20];
 uint8_t eebms[44];
 uint8_t thrA[44];
 uint8_t thrB[44];
+uint8_t mechA[12];
+uint8_t mechB[12];
 
-uint8_t* vals[16] = {NULL, mainpwr, eebms, thrA, thrB};
+uint8_t* vals[16] = {estop, mainpwr, eebms, thrA, thrB, mechA, mechB};
 
 static CAN_message_t CAN_TX_msg;
 static CAN_message_t CAN_RX_msg;
