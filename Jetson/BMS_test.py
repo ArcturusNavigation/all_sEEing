@@ -24,7 +24,6 @@ print("Cell 4 Voltage: %s mV" % eebms.cell_voltage(4))
 print("Cell 5 Voltage: %s mV" % eebms.cell_voltage(5))
 print("Cell 6 Voltage: %s mV" % eebms.cell_voltage(6))
 
-
 thr_a = ArcturusEE.BMS(ser, 0x03)
 print("Reading THR A battery values")
 if thr_a.estop():

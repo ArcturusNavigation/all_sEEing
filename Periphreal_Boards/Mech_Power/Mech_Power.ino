@@ -28,9 +28,13 @@ byte status;
 byte estop;
 
 void setup() {
+  Serial.setRx(PA10);
+  Serial.setTx(PA9);
+  Serial.begin(115200);
   pinMode(ESTOP, INPUT);
   Wire.setSCL(SCL);
   Wire.setSDA(SDA);
+  lm.begin();
 	can.setBaudRate(125000);
 	can.begin(true);
 	can.setFilterSingleMask(0, (BOARD_ID << 7), (0x0F << 7), STD);
@@ -47,6 +51,7 @@ void loop() {
       case 0x04:
         voltage = *((float*) CAN_RX_msg.buf);
         lm.setVoltage(voltage);
+        break;
 		}
 	}
 	if (millis() - lastSend > SEND_INTERVAL) {

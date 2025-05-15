@@ -149,7 +149,7 @@ class main_power:
         Args:
             value (bool): True to turn on fan 1, False to turn off.
         """
-        self.ser.write((bytes([self.id, 0x05, value])))
+        self.ser.write((bytes([(1 << 7) + self.id, 0x05, value])))
         self.wait()
 
     def fan2(self, value):
@@ -159,7 +159,7 @@ class main_power:
         Args:
             value (bool): True to turn on fan 2, False to turn off.
         """
-        self.ser.write((bytes([self.id, 0x06, value])))
+        self.ser.write((bytes([(1 << 7) + self.id, 0x06, value])))
         self.wait()
 
 class ESTOP:
@@ -202,7 +202,10 @@ class ESTOP:
         """
         self.ser.write((bytes([self.id, 0x02])))
         val = self.ser.read(1)[0]
-        return (val - 127.0) / 127.0
+        ret = (val - 127.0) / 127.0
+        if ret != 0:
+            ret *= -1
+        return ret
     
     def drive_y1(self):
         """
@@ -224,7 +227,10 @@ class ESTOP:
         """
         self.ser.write((bytes([self.id, 0x04])))
         val = self.ser.read(1)[0]
-        return (val - 127.0) / 127.0
+        ret = (val - 127.0) / 127.0
+        if ret != 0:
+            ret *= -1
+        return ret
     
     def drive_y2(self):
         """
@@ -254,7 +260,7 @@ class mech_power:
 
         Args:
             ser (serial.Serial): Pyserial interface.
-            id (int): 0x04 for Mech PWR A, 0x05 for Mech PWR B.
+            id (int): 0x05 for Mech PWR A, 0x06 for Mech PWR B.
         """
         self.ser = ser
         self.id = id
@@ -302,7 +308,7 @@ class mech_power:
         Args:
             value (bool): True to turn on, False to turn off.
         """
-        self.ser.write((bytes([self.id, 0x03, value])))
+        self.ser.write((bytes([(1 << 7) + self.id, 0x03, value])))
         self.wait()
         
     def set_voltage(self, value):
@@ -312,6 +318,6 @@ class mech_power:
         Args:
             value (float): Voltage in volts.
         """
-        self.ser.write((bytes([self.id, 0x04])))
+        self.ser.write((bytes([(1 << 7) + self.id, 0x04])))
         self.ser.write(struct.pack("<f", value))
         self.wait()

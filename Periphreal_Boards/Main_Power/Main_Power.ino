@@ -29,10 +29,13 @@ bool fan1on;
 bool fan2on;
 
 void setup() {
+  Serial.setTx(PA9);
+  Serial.setRx(PA10);
+  Serial.begin(115200);
   pinMode(ESTOP, INPUT);
   pinMode(FAN1, OUTPUT);
   pinMode(FAN2, OUTPUT);
-	can.setBaudRate(500000);
+	can.setBaudRate(125000);
 	can.begin(true);
 	can.setFilterSingleMask(0, (BOARD_ID << 7), (0x0F << 7), STD);
 }
@@ -51,16 +54,16 @@ void loop() {
 		}
 	}
 	if (millis() - lastSend > SEND_INTERVAL) {
-		current33 = analogRead(ISENS33) * (3.3 / 1024) * 2;
+		current33 = analogRead(ISENS33) * (3.3 / 1024.0) * 2.0;
 		sendMsg(0x00, (uint8_t*) &current33, sizeof(current33));
 		
-    current5 = analogRead(ISENS5) * (3.3 / 1024) * 2;
+    current5 = analogRead(ISENS5) * (3.3 / 1024.0) * 2.0;
 		sendMsg(0x01, (uint8_t*) &current5, sizeof(current5));
 
-    current12 = analogRead(ISENS12) * (3.3 / 1024) * 2;
+    current12 = analogRead(ISENS12) * (3.3 / 1024.0) * 2.0;
 		sendMsg(0x02, (uint8_t*) &current12, sizeof(current12));
 
-    current19 = analogRead(ISENS19) * (3.3 / 1024) * 2;
+    current19 = analogRead(ISENS19) * (3.3 / 1024.0) * 2.0;
 		sendMsg(0x03, (uint8_t*) &current19, sizeof(current19));
 
     estop = !digitalRead(ESTOP);

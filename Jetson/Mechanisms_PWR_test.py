@@ -4,8 +4,8 @@ import time
 
 ser = serial.Serial("COM21", 115200, timeout = 1)
 
-mech_pwr_a = ArcturusEE.mech_power(ser, 0x04)
-mech_pwr_b = ArcturusEE.mech_power(ser, 0x05)
+mech_pwr_a = ArcturusEE.mech_power(ser, 0x05)
+mech_pwr_b = ArcturusEE.mech_power(ser, 0x06)
 
 if mech_pwr_a.estop():
     print("A: ESTOP ON")

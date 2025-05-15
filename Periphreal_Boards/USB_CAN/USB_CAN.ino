@@ -11,8 +11,8 @@ uint8_t lengths[16][11] = {
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
   {2, 2, 2, 2, 2, 2, 2, 2, 4, 1, 1},
-  {1, 1, 4, 4, 4},
-  {1, 1, 4, 4, 4}
+  {1, 1, 4, 1, 4},
+  {1, 1, 4, 1, 4}
 };
 
 uint8_t estop[28];
@@ -84,7 +84,7 @@ void loop() {
   }
 }
 
-void sendMsg(uint8_t can_id, uint8_t* var, uint8_t len) {
+void sendMsg(uint16_t can_id, uint8_t* var, uint8_t len) {
   CAN_TX_msg.id = can_id;
   CAN_TX_msg.len = len;
   memcpy(CAN_TX_msg.buf, var, len);
