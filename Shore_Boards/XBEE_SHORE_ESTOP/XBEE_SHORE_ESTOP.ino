@@ -49,16 +49,16 @@ void loop() {
   y1val = 127;
   x2val = 127;
   y2val = 127;
-  if(abs(analogRead(X1) - x1cal) > DEADZONE) {
+  if(abs( (long) (analogRead(X1) - x1cal)) > DEADZONE) {
     x1val = map(analogRead(X1) - x1cal, -x1cal, 1023 - x1cal, 0, 254);
   }
-  if(abs(analogRead(Y1) - y1cal) > DEADZONE) {
+  if(abs( (long) (analogRead(Y1) - y1cal)) > DEADZONE) {
     y1val = map(analogRead(Y1) - y1cal, -y1cal, 1023 - y1cal, 0, 254);
   }
-  if(abs(analogRead(X2) - x2cal) > DEADZONE) {
+  if(abs( (long) (analogRead(X2) - x2cal)) > DEADZONE) {
     x2val = map(analogRead(X2) - x2cal, -x2cal, 1023 - x2cal, 0, 254);
   }
-  if(abs(analogRead(Y2) - y2cal) > DEADZONE) {
+  if(abs( (long) (analogRead(Y2) - y2cal)) > DEADZONE) {
     y2val = map(analogRead(Y2) - y2cal, -y2cal, 1023 - y2cal, 0, 254);
   }
 
