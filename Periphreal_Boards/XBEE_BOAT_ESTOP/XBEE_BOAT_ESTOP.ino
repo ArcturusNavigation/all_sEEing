@@ -42,6 +42,7 @@ void setup() {
   digitalWrite(ESTOP, 1);
   pinMode(CONN, OUTPUT);
 	can.setBaudRate(125000);
+	can.setAutoBusOffRecovery(true);
 	can.begin(true);
 	can.setFilterSingleMask(0, (BOARD_ID << 7), (0x0F << 7), STD);
   Serial2.begin(115200);
