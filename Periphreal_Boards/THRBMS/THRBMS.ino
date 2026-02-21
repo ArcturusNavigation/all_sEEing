@@ -6,7 +6,7 @@
 #define CANRX PB8
 #define CANTX PB9
 #define SEND_INTERVAL 1000
-#define BOARD_ID 0x04 //0x03 FOR THR A, 0x04 FOR THR B
+#define BOARD_ID 0x03 //0x03 FOR THR A, 0x04 FOR THR B
 #define ESTOP PA3
 #define DSG PA4
 
@@ -43,6 +43,7 @@ void setup() {
   bms.ddsgConfig();
   bms.dfetoffConfig();
   bms.enableFet();
+  bms.chargePumpEnable();
   bms.exitConfigMode();
 	can.setBaudRate(125000);
   //can.setAutoBusOffRecovery(true);

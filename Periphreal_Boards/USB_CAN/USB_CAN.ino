@@ -21,10 +21,11 @@ uint8_t mainpwr[20];
 uint8_t eebms[44];
 uint8_t thrA[44];
 uint8_t thrB[44];
-uint8_t mechA[12];
-uint8_t mechB[12];
+uint8_t mechA[20];
+uint8_t mechB[20];
+uint8_t mechanisms[32];
 
-uint8_t* vals[16] = {estop, mainpwr, eebms, thrA, thrB, mechA, mechB};
+uint8_t* vals[16] = {estop, mainpwr, eebms, thrA, thrB, mechA, mechB, mechanisms};
 
 static CAN_message_t CAN_TX_msg;
 static CAN_message_t CAN_RX_msg;
